@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>OmniView — open any file in your browser</title>
+<meta name="description" content="Open, organize and edit images, video, audio, PDF, Word, Excel and text files in one place. Everything stays in your browser.">
+<meta name="theme-color" content="#4b3df0">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preload" href="fonts/hanken-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/bricolage-grotesque-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="splash" id="splash" role="status"><div><img src="icons/icon.svg" alt=""><b class="brand">OmniView</b><span data-i="Loading your library…">Loading your library…</span><div class="prog ind"><i></i></div></div></div>
+<div id="bar" role="progressbar" aria-hidden="true"></div>
+<div class="app" id="app">
+  <header class="top">
+    <a class="brand" href="./" aria-label="OmniView"><img src="icons/icon.svg" alt=""><span>OmniView</span></a>
+    <input id="q" type="search" data-ip="Search name, type or tag…" data-it="Search" placeholder="Search name, type or tag…">
+    <button id="btn-import" class="pri" data-i="Import files">Import files</button>
+    <button id="btn-install" hidden data-i="Install app">Install app</button>
+    <button id="btn-help" class="ic" data-it="Keyboard shortcuts" aria-label="Keyboard shortcuts">?</button>
+    <button id="btn-settings" class="ic" data-it="Settings" aria-label="Settings">⚙</button>
+  </header>
+  <nav class="side" id="nav" data-it="Main navigation" aria-label="Main navigation"></nav>
+  <main id="main"></main>
+</div>
+<section id="view" hidden aria-label="Viewer"></section>
+<div id="toast" role="status" aria-live="polite"></div>
+<input id="fi" type="file" multiple hidden>
+<input id="fo" type="file" webkitdirectory multiple hidden>
+<noscript><p style="padding:2rem">OmniView needs JavaScript to run.</p></noscript>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
