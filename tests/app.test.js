@@ -32,6 +32,7 @@ const docx = () => Buffer.from(fflate.zipSync({
 const xlsx = () => { const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([["Name", "Qty"], ["Apple", 3]]), "Fruit"); XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([["City"], ["Cluj"]]), "Cities"); return Buffer.from(XLSX.write(wb, { type: "array", bookType: "xlsx" })); };
 
 beforeAll(async () => {
+  document.head.insertAdjacentHTML("beforeend", '<meta name="theme-color" content="#f4f6fb"><link rel="icon" href="icons/icon.svg">');
   const html = readFileSync("index.html", "utf8");
   document.body.innerHTML = html.slice(html.indexOf("<body>") + 6, html.indexOf("</body>")).replace(/<script[\s\S]*?<\/script>/g, "");
   await start({ indexedDBFactory: new IDBFactory() });
@@ -124,11 +125,14 @@ describe("application", () => {
     $("#btn-settings").click();
     const sel = (label) => $$(".dlg label").find((l) => l.textContent.startsWith(label));
     [...$$(".dlg button")].find((b) => b.textContent === "Appearance").click();
-    const theme = sel("Theme").querySelector("select"); theme.value = "dark"; theme.dispatchEvent(new Event("change")); expect(document.documentElement.dataset.theme).toBe("dark");
+    const theme = sel("Theme").querySelector("select"); expect([...theme.options].map((o) => o.value)).toEqual(["system", "light", "dark", "halloween"]);
+    theme.value = "dark"; theme.dispatchEvent(new Event("change")); expect(document.documentElement.dataset.theme).toBe("dark");
+    const t2 = sel("Theme").querySelector("select"); t2.value = "halloween"; t2.dispatchEvent(new Event("change")); expect(document.documentElement.dataset.theme).toBe("halloween");
+    expect(document.querySelector('meta[name="theme-color"]').content).toBe("#150b22"); expect(document.querySelector('link[rel="icon"]').getAttribute("href")).toBe("icons/icon-halloween.svg");
     [...$$(".dlg button")].find((b) => b.textContent === "General").click();
     const lang = sel("Language").querySelector("select"); lang.value = "ro"; lang.dispatchEvent(new Event("change")); await sleep(60);
-    expect(document.documentElement.lang).toBe("ro"); expect($("#btn-import").textContent).toBe("Importă fișiere"); expect($("#nav").textContent).toContain("Acasă");
-    update({ lang: "en", theme: "system" }); await sleep(40); expect($("#btn-import").textContent).toBe("Import files");
+    expect(document.documentElement.lang).toBe("ro"); expect($("#btn-import .t").textContent).toBe("Importă fișiere"); expect($("#nav").textContent).toContain("Acasă");
+    update({ lang: "en", theme: "system" }); await sleep(40); expect($("#btn-import .t").textContent).toBe("Import files");
   });
 
   it("the Data tab shows storage and can wipe everything after confirmation", async () => {
@@ -137,5 +141,43 @@ describe("application", () => {
     [...$$(".dlg button")].find((b) => b.textContent.startsWith("Delete all data")).click(); await sleep(30);
     const confirm = $$(".dlg-b").pop(); [...confirm.querySelectorAll("button")].find((b) => b.textContent === "Delete everything").click(); await sleep(100);
     expect(L.state.items).toHaveLength(0);
+  });
+});
+
+describe("subtitles", () => {
+  const SRT = "1\n00:00:01,000 --> 00:00:03,000\nHello world\n\n2\n00:00:04,000 --> 00:00:06,500\nSecond line\n";
+  it("imports an SRT as a subtitle item with its own section", async () => {
+    L.state.section = "all"; L.emit(); await sleep(60);
+    await importUI([new File([SRT], "film.srt")]); await until(() => card("film.srt"));
+    expect(L.state.items.find((i) => i.name === "film.srt")).toMatchObject({ fmt: "srt", cat: "sub" });
+    expect($("#nav").textContent).toContain("Subtitles");
+    document.querySelectorAll(".dlg-b").forEach((d) => d.remove());
+  });
+  it("opens the editor: lines in the grid, edit a line, shift times, save back to the file", async () => {
+    card("film.srt").click(); await until(() => $(".srow"));
+    expect($$(".srow")).toHaveLength(2); expect($(".sed-text").value).toBe("Hello world");
+    const area = $(".sed-text"); area.value = "Hello brave world"; area.dispatchEvent(new Event("input"));
+    expect($$(".srow")[0].textContent).toContain("Hello brave world");
+    // shift everything by +1000 ms through the dialog
+    [...$$(".sedbar button")].find((b) => b.textContent.startsWith("Shift")).click(); await until(() => $(".dlg"));
+    const ms = $(".dlg input[type=number]"); ms.value = "1000"; [...$$(".dlg button")].find((b) => b.textContent === "Shift").click(); await sleep(80);
+    expect($$(".srow")[0].textContent).toContain("0:00:02.000".replace("0:", "00:"));
+    document.dispatchEvent(new KeyboardEvent("keydown", { key: "s", ctrlKey: true, bubbles: true })); await sleep(120);
+    const rec = L.state.items.find((i) => i.name === "film.srt"), saved = await rec.blob.text();
+    expect(saved).toContain("00:00:02,000 --> 00:00:04,000\nHello brave world"); expect(saved).toContain("00:00:05,000 --> 00:00:07,500\nSecond line");
+  });
+  it("undo and redo restore earlier states", async () => {
+    card("film.srt").click(); await until(() => $(".srow"));
+    const undo = [...$$(".sedbar button")].find((b) => b.textContent === "↶"), before = $$(".srow")[0].textContent;
+    const area = $(".sed-text"); area.value = "Changed"; area.dispatchEvent(new Event("input")); await sleep(800);
+    expect($$(".srow")[0].textContent).toContain("Changed"); undo.click(); await sleep(40); expect($$(".srow")[0].textContent).toBe(before);
+  });
+  it("the quality check dialog lists problems and Back asks before discarding unsaved work", async () => {
+    card("film.srt").click(); await until(() => $(".srow"));
+    const area = $(".sed-text"); area.value = "x".repeat(60); area.dispatchEvent(new Event("input")); await sleep(800);
+    [...$$(".sedbar button")].find((b) => b.textContent === "Check").click(); await until(() => $(".qcrow")); expect($(".qc").textContent).toContain("too long");
+    document.querySelectorAll(".dlg-b").forEach((d) => d.remove());
+    [...$$(".vb button")].find((b) => b.textContent.includes("Back")).click(); await until(() => $(".dlg header")); expect($(".dlg header").textContent).toBe("Unsaved changes");
+    [...$$(".dlg button")].find((b) => b.textContent === "Cancel").click(); await sleep(40); expect(isOpen()).toBe(true);
   });
 });

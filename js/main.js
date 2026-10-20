@@ -2,10 +2,10 @@
 import { $, h, toast, bar, download, debounce } from "./util.js";
 import * as db from "./db.js";
 import * as L from "./library.js";
-import { settings, loadSettings, update } from "./settings.js";
+import { settings, loadSettings, update, inHalloweenSeason } from "./settings.js";
 import { t, applyI18n, onLang } from "./i18n.js";
 import { render, importUI, setAndScroll, closeCtx } from "./views.js";
-import { isOpen, closeViewer, step } from "./viewer.js";
+import { isOpen, requestClose, step } from "./viewer.js";
 import { openSettings, onboarding } from "./dialogs.js";
 import { exportBackup, importBackup } from "./backup.js";
 
@@ -53,7 +53,7 @@ function wire() {
     if (document.querySelector(".dlg-b")) return; // dialogs handle their own keys
     if (mod && key === "o") { e.preventDefault(); (e.shiftKey ? $("#fo") : $("#fi")).click(); }
     else if (mod && key === ",") { e.preventDefault(); openSettings("General", hooks); }
-    else if (e.key === "Escape") { if (isOpen()) closeViewer(); else { closeCtx(); if (L.state.sel.size) { L.state.sel.clear(); L.emit(); } } }
+    else if (e.key === "Escape") { if (isOpen()) requestClose(); else { closeCtx(); if (L.state.sel.size) { L.state.sel.clear(); L.emit(); } } }
     else if (isOpen() && !typing && (e.key === "ArrowRight" || e.key === "ArrowLeft")) step(e.key === "ArrowRight" ? 1 : -1);
     else if (!typing && !isOpen() && (e.key === "/" || (mod && key === "f"))) { e.preventDefault(); $("#q").focus(); }
     else if (!typing && e.key === "?") openSettings("Shortcuts", hooks);
@@ -64,8 +64,11 @@ function wire() {
   let deferred = null;
   addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); deferred = e; $("#btn-install").hidden = false; });
   $("#btn-install").onclick = async () => { if (!deferred) return; deferred.prompt(); await deferred.userChoice.catch(() => {}); deferred = null; $("#btn-install").hidden = true; };
-  onLang(() => { applyI18n(); render(); });
+  onLang(() => { applyI18n(); render(); setTimeout(measureHeader, 0); });
+  const hdr = $("header.top");
+  if (hdr) { measureHeader(); new ResizeObserver(measureHeader).observe(hdr); addEventListener("resize", measureHeader); }
 }
+function measureHeader() { const h = $("header.top"); if (h) document.documentElement.style.setProperty("--hdr-h", h.offsetHeight + "px"); }
 
 function registerSW() {
   if (!("serviceWorker" in navigator) || !/^https?:$/.test(location.protocol)) return;
@@ -90,5 +93,9 @@ export async function start({ indexedDBFactory } = {}) {
   const sp = $("#splash"); if (sp) { sp.classList.add("out"); setTimeout(() => sp.remove(), 300); }
   registerSW();
   if (!settings.onboarded) onboarding(() => update({ onboarded: true }));
+  else if (inHalloweenSeason() && settings.theme !== "halloween") {
+    let asked = false; try { asked = !!localStorage.getItem("ov-hw-asked"); localStorage.setItem("ov-hw-asked", "1"); } catch { /* ignore */ }
+    if (!asked) setTimeout(() => toast(t("Halloween is here 🎃 Try the spooky theme?"), { label: t("Try it"), run: () => update({ theme: "halloween" }) }), 2500);
+  }
 }
 if (!globalThis.__OV_TEST__) start();

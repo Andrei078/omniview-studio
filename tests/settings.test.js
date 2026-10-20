@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { DEFAULTS, loadSettings, sanitize, settings, update } from "../js/settings.js";
+import { DEFAULTS, inHalloweenSeason, loadSettings, sanitize, settings, update } from "../js/settings.js";
 
 beforeEach(() => { localStorage.clear(); document.documentElement.removeAttribute("data-theme"); document.documentElement.style.cssText = ""; loadSettings(); });
 describe("settings", () => {
@@ -18,6 +18,10 @@ describe("settings", () => {
   it("survives corrupt stored JSON and invalid updates", () => {
     localStorage.setItem("ov-settings", "{broken"); loadSettings(); expect(settings).toEqual(DEFAULTS);
     update({ theme: "light" }); update({ theme: "bogus" }); expect(settings.theme).toBe("light");
+  });
+  it("accepts the Halloween theme", () => { update({ theme: "halloween" }); expect(document.documentElement.dataset.theme).toBe("halloween"); expect(settings.theme).toBe("halloween"); });
+  it("knows when it is Halloween season (15 Oct - 2 Nov)", () => {
+    expect([[2026, 9, 14], [2026, 9, 15], [2026, 9, 31], [2026, 10, 2], [2026, 10, 3], [2026, 5, 1]].map(([y, m, d]) => inHalloweenSeason(new Date(y, m, d)))).toEqual([false, true, true, true, false, false]);
   });
   it("switches the UI language", () => { update({ lang: "ro" }); expect(document.documentElement.lang).toBe("ro"); update({ lang: "en" }); expect(document.documentElement.lang).toBe("en"); });
 });

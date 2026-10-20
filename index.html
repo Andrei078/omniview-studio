@@ -5,22 +5,25 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>OmniView — open any file in your browser</title>
 <meta name="description" content="Open, organize and edit images, video, audio, PDF, Word, Excel and text files in one place. Everything stays in your browser.">
-<meta name="theme-color" content="#4b3df0">
+<meta name="theme-color" content="#f4f6fb">
 <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="preload" href="fonts/hanken-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/bricolage-grotesque-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/halloween.css">
+<link rel="stylesheet" href="css/subs.css">
 </head>
 <body>
-<div class="splash" id="splash" role="status"><div><img src="icons/icon.svg" alt=""><b class="brand">OmniView</b><span data-i="Loading your library…">Loading your library…</span><div class="prog ind"><i></i></div></div></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><symbol id="mark" viewBox="0 0 64 64"><defs><linearGradient id="lg-bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--lb1)"/><stop offset="1" style="stop-color:var(--lb2)"/></linearGradient><radialGradient id="lg-gl" cx=".3" cy=".2" r=".9"><stop offset="0" stop-color="#fff" stop-opacity=".22"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/></radialGradient></defs><rect width="64" height="64" rx="16" fill="url(#lg-bg)"/><rect width="64" height="64" rx="16" fill="url(#lg-gl)"/><g fill="none" stroke-width="6.5" stroke-linecap="round" transform="rotate(-135 32 32)"><circle cx="32" cy="32" r="21" style="stroke:var(--l1)" stroke-dasharray="27 104.9"/><circle cx="32" cy="32" r="21" style="stroke:var(--l2)" stroke-dasharray="27 104.9" transform="rotate(90 32 32)"/><circle cx="32" cy="32" r="21" style="stroke:var(--l3)" stroke-dasharray="27 104.9" transform="rotate(180 32 32)"/><circle cx="32" cy="32" r="21" style="stroke:var(--l4)" stroke-dasharray="27 104.9" transform="rotate(270 32 32)"/></g><path d="M17.5 32C22 24.6 27 21.6 32 21.6S42 24.6 46.5 32C42 39.4 37 42.4 32 42.4S22 39.4 17.5 32Z" fill="#fff"/><g class="p-round"><circle cx="32" cy="32" r="6.4" style="fill:var(--lp)"/><circle cx="34.2" cy="29.8" r="2.1" fill="#fff"/></g><g class="p-slit"><circle cx="32" cy="32" r="7.4" style="fill:var(--lp)"/><ellipse cx="32" cy="32" rx="1.9" ry="6.6" fill="#1a0b00"/><circle cx="34.4" cy="29.6" r="1.6" fill="#fff"/></g></symbol></svg>
+<div class="splash" id="splash" role="status"><div><svg class="logo" aria-hidden="true" focusable="false"><use href="#mark"/></svg><b class="brand">OmniView</b><span data-i="Loading your library…">Loading your library…</span><div class="prog ind"><i></i></div></div></div>
 <div id="bar" role="progressbar" aria-hidden="true"></div>
 <div class="app" id="app">
   <header class="top">
-    <a class="brand" href="./" aria-label="OmniView"><img src="icons/icon.svg" alt=""><span>OmniView</span></a>
+    <a class="brand" href="./" aria-label="OmniView"><svg class="logo" aria-hidden="true" focusable="false"><use href="#mark"/></svg><span>OmniView</span></a>
     <input id="q" type="search" data-ip="Search name, type or tag…" data-it="Search" placeholder="Search name, type or tag…">
-    <button id="btn-import" class="pri" data-i="Import files">Import files</button>
+    <button id="btn-import" class="pri" data-it="Import files" aria-label="Import files" title="Import files"><span class="plus" aria-hidden="true">＋</span><span class="t" data-i="Import files">Import files</span></button>
     <button id="btn-install" hidden data-i="Install app">Install app</button>
     <button id="btn-help" class="ic" data-it="Keyboard shortcuts" aria-label="Keyboard shortcuts">?</button>
     <button id="btn-settings" class="ic" data-it="Settings" aria-label="Settings">⚙</button>

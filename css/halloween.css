@@ -1,0 +1,25 @@
+/* Halloween theme: warm orange on deep purple, cat-eye logo, cobwebs and a few bats. Decoration never intercepts clicks. */
+:root[data-theme="halloween"]{--bg:#120a1d;--pn:#1d1130;--pn2:#2a1a45;--ink:#f6ecff;--mut:#bba6d8;--ln:#3b2560;--br:#ff7a18;--on:#1a0b00;--danger:#ff7a7a;
+--c-img:#ff7a18;--c-vid:#b56cff;--c-aud:#7ddc4a;--c-doc:#ffc83d;--c-txt:#4fd1ff;--c-sub:#ff5fa8;
+--l1:#ff7a18;--l2:#b56cff;--l3:#7ddc4a;--l4:#ffc83d;--lb1:#2e1550;--lb2:#0b0614;--lp:#ff7a18;
+--web:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M0 0L100.0 0.0M0 0L92.4 38.3M0 0L70.7 70.7M0 0L38.3 92.4M0 0L0.0 100.0M28.0 0.0Q22.0 4.4 25.9 10.7Q18.6 12.4 19.8 19.8Q12.4 18.6 10.7 25.9Q4.4 22.0 0.0 28.0M56.0 0.0Q43.9 8.7 51.7 21.4Q37.2 24.9 39.6 39.6Q24.9 37.2 21.4 51.7Q8.7 43.9 0.0 56.0M84.0 0.0Q65.9 13.1 77.6 32.1Q55.9 37.3 59.4 59.4Q37.3 55.9 32.1 77.6Q13.1 65.9 0.0 84.0' fill='none' stroke='white' stroke-width='.9' stroke-linecap='round'/%3E%3C/svg%3E");
+--bat:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 24'%3E%3Cpath d='M20 6C18 3 16 2 14 4 12 2 8 3 4 8 6 8 8 9 9 11 7 11 5 12 3 15 6 14 9 15 11 17 12 15 14 14 16 14 17 18 19 21 20 22 21 21 23 18 24 14 26 14 28 15 29 17 31 15 34 14 37 15 35 12 33 11 31 11 32 9 34 8 36 8 32 3 28 2 26 4 24 2 22 3 20 6Z' fill='%23b56cff'/%3E%3C/svg%3E");
+color-scheme:dark}
+:root[data-theme="halloween"] body{background:radial-gradient(900px 480px at 88% -8%,#4a1f7a55,transparent 70%),radial-gradient(800px 420px at -5% 108%,#ff7a1826,transparent 70%),var(--bg);scrollbar-color:#ff7a18 #1d1130}
+[data-theme="halloween"] header.top{background:color-mix(in srgb,#120a1d 88%,transparent);overflow:hidden}
+[data-theme="halloween"] header.top::before{content:"";position:absolute;left:0;top:0;width:96px;height:96px;background:var(--web) no-repeat left top/contain;opacity:.22;pointer-events:none}
+[data-theme="halloween"] header.top::after{content:"";position:absolute;right:0;top:0;width:80px;height:80px;background:var(--web) no-repeat left top/contain;transform:scaleX(-1);opacity:.16;pointer-events:none}
+[data-theme="halloween"] .brand span,[data-theme="halloween"] .splash b{font-family:"Creepster","Bricolage Grotesque",system-ui,sans-serif;font-weight:400;letter-spacing:.04em;font-size:1.55rem;color:#ff9a3c;text-shadow:0 0 14px #ff7a1866}
+[data-theme="halloween"] button.pri{background:linear-gradient(180deg,#ff9a3c,#ff6a00);border-color:#ff8a1f;box-shadow:0 0 18px #ff7a1855}
+[data-theme="halloween"] .card{border-color:#3b2560}
+@media(hover:hover){[data-theme="halloween"] .card:hover{border-color:#ff7a18;box-shadow:0 0 22px #ff7a1833}}
+[data-theme="halloween"] .hero h1::after{content:" 🎃"}
+[data-theme="halloween"] .hero svg.logo{filter:drop-shadow(0 0 22px #ff7a1877)}
+[data-theme="halloween"] .p-round{display:none}[data-theme="halloween"] .p-slit{display:inline}
+.p-slit{display:none}
+[data-theme="halloween"] body::before,[data-theme="halloween"] body::after{content:"";position:fixed;left:-60px;width:38px;height:23px;background:var(--bat) no-repeat center/contain;pointer-events:none;z-index:7;opacity:.85;animation:bat 22s linear infinite}
+[data-theme="halloween"] body::before{top:84px}
+[data-theme="halloween"] body::after{top:132px;width:26px;height:16px;animation-duration:31s;animation-delay:-11s;opacity:.6}
+@keyframes bat{0%{transform:translate(0,0) scaleY(1)}12%{transform:translate(14vw,-14px) scaleY(.7)}25%{transform:translate(28vw,10px) scaleY(1)}37%{transform:translate(42vw,-12px) scaleY(.7)}50%{transform:translate(56vw,12px) scaleY(1)}62%{transform:translate(70vw,-10px) scaleY(.7)}75%{transform:translate(84vw,8px) scaleY(1)}100%{transform:translate(calc(100vw + 80px),0) scaleY(1)}}
+@media(prefers-reduced-motion:reduce){[data-theme="halloween"] body::before,[data-theme="halloween"] body::after{display:none}}
+@media(max-width:700px){[data-theme="halloween"] body::before{top:70px}[data-theme="halloween"] body::after{top:110px}}

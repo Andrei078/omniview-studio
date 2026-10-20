@@ -29,15 +29,41 @@ export function ask({ title, message, input, select, confirm = msg("OK"), danger
   });
 }
 
+/** Generic form dialog. fields: [{ key, label, type: text|number|select|checkbox|color|note|node, value, options, hint, min, max, step }]. Resolves to the values or null. */
+export function form({ title, fields, confirm = msg("OK"), cancel = msg("Cancel"), validate, wide = false }) {
+  return new Promise((done) => {
+    const inputs = {}, err = h("div", { class: "warn", hidden: true });
+    const rows = fields.map((f) => {
+      if (f.type === "node") return f.node;
+      if (f.type === "note") return h("p", { style: "margin:0;color:var(--mut)" }, f.label);
+      let el;
+      if (f.type === "select") el = h("select", { "aria-label": f.label }, f.options.map(([v, l]) => h("option", { value: v, selected: String(v) === String(f.value) }, l)));
+      else if (f.type === "checkbox") el = h("input", { type: "checkbox", checked: !!f.value });
+      else if (f.type === "color") el = h("input", { type: "color", value: f.value || "#ffffff", "aria-label": f.label });
+      else el = h("input", { type: f.type === "number" ? "number" : "text", value: f.value ?? "", min: f.min, max: f.max, step: f.step, placeholder: f.placeholder || "", "aria-label": f.label });
+      inputs[f.key] = el;
+      return h("label", { class: "fld" }, h("span", {}, f.label, f.hint ? h("small", {}, f.hint) : null), el);
+    });
+    const read = () => Object.fromEntries(fields.filter((f) => inputs[f.key]).map((f) => { const el = inputs[f.key]; return [f.key, f.type === "checkbox" ? el.checked : f.type === "number" ? Number(el.value) : el.value]; }));
+    const finish = (v) => { m.close(); done(v); };
+    const submit = () => { const v = read(), e = validate?.(v); if (e) { err.textContent = e; err.hidden = false; return; } finish(v); };
+    const box = h("div", { class: "dlg" + (wide ? " wide" : ""), role: "dialog", "aria-modal": "true", "aria-label": title }, h("header", {}, title), h("div", { class: "c" }, rows, err), h("footer", {}, cancel ? h("button", { onclick: () => finish(null) }, t(cancel)) : null, h("button", { class: "pri", onclick: submit }, t(confirm))));
+    const m = modal(box); m.back.addEventListener("dismiss", () => finish(null));
+    box.addEventListener("keydown", (e) => { if (e.key === "Enter" && e.target.tagName === "INPUT" && e.target.type !== "checkbox") submit(); });
+    (Object.values(inputs)[0] || box.querySelector(".pri")).focus();
+  });
+}
+
 export const SHORTCUTS = [
   ["Ctrl+O", msg("Import files")], ["Ctrl+Shift+O", msg("Import folder")], ["/  or  Ctrl+F", msg("Search")], ["← →", msg("Previous / next file")], ["Esc", msg("Close viewer or dialog")],
   ["Ctrl+S", msg("Save changes (text editor)")], ["Ctrl+Z / Ctrl+Y", msg("Undo / redo in the active editor")], ["Delete", msg("Move selected files to Trash")], ["Ctrl+A", msg("Select all visible files")], ["Ctrl+,", msg("Settings")], ["?", msg("Keyboard shortcuts")],
+  ["F2 / F3", msg("Subtitle editor: set start / end from the video time")], ["F5", msg("Subtitle editor: play the selected line")], ["Space", msg("Subtitle editor: play / pause")], ["← →", msg("Subtitle editor: seek 1 second")],
 ];
 const TABS = [msg("General"), msg("Appearance"), msg("Library"), msg("Data"), msg("Shortcuts"), msg("About")];
 
 export function openSettings(tab = "General", hooks = {}) {
   let cur = tab;
-  const content = h("div", { class: "c" }), tabs = h("div", { class: "row", style: "justify-content:flex-start;padding:10px 18px 0" });
+  const content = h("div", { class: "c" }), tabs = h("div", { class: "tabs" });
   const sel = (key, opts) => h("select", { onchange: (e) => { update({ [key]: typeof DEFAULTS[key] === "number" ? Number(e.target.value) : e.target.value }); draw(); } }, opts.map(([v, l]) => h("option", { value: v, selected: String(settings[key]) === String(v) }, l)));
   const fld = (label, ctl, hint) => h("label", { class: "fld" }, h("span", {}, label, hint ? h("small", {}, hint) : null), ctl);
   async function data() {
@@ -56,7 +82,7 @@ export function openSettings(tab = "General", hooks = {}) {
       fld(t("Play next track automatically"), h("input", { type: "checkbox", checked: settings.autoNext, onchange: (e) => update({ autoNext: e.target.checked }) })),
       fld(t("Waveform analysis limit"), sel("waveMb", [[8, "8 MB"], [16, "16 MB"], [32, "32 MB"], [64, "64 MB"]]), t("Bigger audio files are played without a waveform to save memory.")));
     if (cur === "Appearance") content.append(
-      fld(t("Theme"), sel("theme", [["system", t("System")], ["light", t("Light")], ["dark", t("Dark")]])),
+      fld(t("Theme"), sel("theme", [["system", t("System")], ["light", t("Light")], ["dark", t("Dark")], ["halloween", t("Halloween") + " 🎃"]])),
       fld(t("Accent color"), h("input", { type: "color", value: settings.accent, onchange: (e) => update({ accent: e.target.value }) })),
       fld(t("Interface size"), sel("scale", [[90, "90%"], [100, "100%"], [110, "110%"], [120, "120%"]])),
       fld(t("Density"), sel("density", [["comfortable", t("Comfortable")], ["compact", t("Compact")]])));

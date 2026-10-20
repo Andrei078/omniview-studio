@@ -30,9 +30,25 @@ export async function mount(rec, body, ctx) {
   const zoom = (k) => { z = Math.min(12, Math.max(0.1, z * k)); paint(); };
   const reset = () => { z = 1; x = y = 0; paint(); };
   stage.onwheel = (e) => { e.preventDefault(); zoom(e.deltaY < 0 ? 1.12 : 1 / 1.12); };
-  stage.onpointerdown = (e) => { drag = { x: e.clientX - x, y: e.clientY - y }; stage.setPointerCapture?.(e.pointerId); stage.style.cursor = "grabbing"; };
-  stage.onpointermove = (e) => { if (drag) { x = e.clientX - drag.x; y = e.clientY - drag.y; paint(); } };
-  stage.onpointerup = () => { drag = null; stage.style.cursor = ""; };
+  // one finger / mouse pans, two fingers pinch-zoom (pointer events work for touch, pen and mouse)
+  const ptrs = new Map(); let pinch = null;
+  const dist = () => { const [a, b] = [...ptrs.values()]; return Math.hypot(a.x - b.x, a.y - b.y) || 1; };
+  stage.onpointerdown = (e) => {
+    ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY }); stage.setPointerCapture?.(e.pointerId);
+    if (ptrs.size === 1) { drag = { x: e.clientX - x, y: e.clientY - y }; stage.style.cursor = "grabbing"; }
+    else if (ptrs.size === 2) { drag = null; pinch = { d: dist(), z }; }
+  };
+  stage.onpointermove = (e) => {
+    if (!ptrs.has(e.pointerId)) return;
+    ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (ptrs.size === 2 && pinch) { z = Math.min(12, Math.max(0.1, pinch.z * dist() / pinch.d)); paint(); }
+    else if (drag) { x = e.clientX - drag.x; y = e.clientY - drag.y; paint(); }
+  };
+  const up = (e) => {
+    ptrs.delete(e.pointerId); if (ptrs.size < 2) pinch = null;
+    if (ptrs.size === 1) { const [p] = [...ptrs.values()]; drag = { x: p.x - x, y: p.y - y }; } else { drag = null; stage.style.cursor = ""; }
+  };
+  stage.onpointerup = up; stage.onpointercancel = up;
   stage.ondblclick = reset;
   let failed = false;
   img.onerror = () => { failed = true; msgBox(body, t("The browser cannot display this image (unsupported codec or damaged file).")); };

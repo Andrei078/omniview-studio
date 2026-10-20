@@ -1,5 +1,5 @@
 // Text, Markdown, JSON, HTML source and CSV. Editable with draft recovery; Markdown has a sanitized live preview.
-import { h, lib, markdown, parseCSV, toast, fmtB } from "../util.js";
+import { h, lib, markdown, parseCSV, toast, fmtB, put } from "../util.js";
 import { t } from "../i18n.js";
 
 const draftKey = (id) => "ov-draft-" + id;
@@ -49,5 +49,5 @@ export async function mount(rec, body, ctx) {
     main = h("div", { class: "split" }, area, prev);
   }
   body.style.flexDirection = "column";
-  body.append(bar, banner, h("div", { style: "flex:1;min-height:0;display:flex" }, main)); refresh();
+  put(body, bar, banner, h("div", { style: "flex:1;min-height:0;display:flex" }, main)); refresh();
 }

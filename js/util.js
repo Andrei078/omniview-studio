@@ -16,6 +16,12 @@ export function h(tag, attrs = {}, ...kids) {
   return e;
 }
 
+/** The app logo as an inline SVG that follows the active theme (colors come from CSS variables). */
+export function logo() { const d = document.createElement("div"); d.innerHTML = '<svg class="logo" aria-hidden="true" focusable="false"><use href="#mark"/></svg>'; return d.firstChild; }
+
+/** append() that skips null/false (native append would print the text "null"). */
+export function put(parent, ...kids) { parent.append(...kids.flat(Infinity).filter((k) => k != null && k !== false)); return parent; }
+
 export const fmtB = (n) => (n < 1024 ? n + " B" : n < 1048576 ? (n / 1024).toFixed(0) + " KB" : n < 1073741824 ? (n / 1048576).toFixed(1) + " MB" : (n / 1073741824).toFixed(2) + " GB");
 export const debounce = (fn, ms) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; };
 

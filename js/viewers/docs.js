@@ -17,7 +17,7 @@ async function docx(rec, body, ctx) {
   const page = h("div", { class: "page" }); page.innerHTML = purify.sanitize(out.value);
   const exec = (c, v) => { page.focus(); document.execCommand(c, false, v); };
   const btn = (label, fn, title) => h("button", { class: "ic", title, "aria-label": title || label, onmousedown: (e) => e.preventDefault(), onclick: fn }, label);
-  const fmtBar = h("div", { class: "vb", hidden: true, style: "justify-content:center" },
+  const fmtBar = h("div", { class: "vb c", hidden: true },
     btn("B", () => exec("bold"), t("Bold")), btn("I", () => exec("italic"), t("Italic")), btn("U", () => exec("underline"), t("Underline")),
     btn("H1", () => exec("formatBlock", "H1"), t("Heading 1")), btn("H2", () => exec("formatBlock", "H2"), t("Heading 2")), btn("¶", () => exec("formatBlock", "P"), t("Paragraph")),
     btn("• ", () => exec("insertUnorderedList"), t("Bulleted list")), btn("1.", () => exec("insertOrderedList"), t("Numbered list")), btn("↶", () => exec("undo"), t("Undo")), btn("↷", () => exec("redo"), t("Redo")));

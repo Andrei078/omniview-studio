@@ -61,6 +61,13 @@ export async function mount(rec, body, ctx) {
     page = lo + 1; info.value = page; mark();
   }); });
   ctx.cleanup(() => { cancelAnimationFrame(raf); view.page = page; view.scale = fit === "custom" ? scale : 0; view.rot = rot; ctx.saveView(); });
+  let pinch0 = 0;
+  const tdist = (e) => Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+  pages.addEventListener("touchstart", (e) => { if (e.touches.length === 2) pinch0 = tdist(e); }, { passive: true });
+  pages.addEventListener("touchmove", (e) => { if (e.touches.length === 2 && pinch0) { const k = tdist(e) / pinch0; pages.style.transformOrigin = "50% 0"; pages.style.transform = `scale(${Math.min(3, Math.max(.4, k))})`; pages.dataset.k = k; } }, { passive: true });
+  const endPinch = () => { if (!pinch0) return; const k = +pages.dataset.k || 1; pinch0 = 0; pages.style.transform = ""; pages.dataset.k = ""; if (Math.abs(k - 1) > 0.05) zoomBy(k); };
+  pages.addEventListener("touchend", (e) => { if (e.touches.length < 2) endPinch(); }, { passive: true });
+  pages.addEventListener("touchcancel", () => { pinch0 = 0; pages.style.transform = ""; }, { passive: true });
   const zoomBy = (k) => { fit = "custom"; scale = Math.min(5, Math.max(0.2, scale * k)); build(page); };
 
   // thumbnails
@@ -91,7 +98,7 @@ export async function mount(rec, body, ctx) {
   q.onkeydown = (e) => { if (e.key !== "Enter") return; if (e.shiftKey) step(-1); else if (hits.length && q.dataset.last === q.value) step(1); else { q.dataset.last = q.value; search(); } };
   ctx.cleanup(() => { searchId++; bar(null); });
 
-  const tb = h("div", { class: "vb", style: "justify-content:center" },
+  const tb = h("div", { class: "vb c" },
     h("button", { class: "ic", "aria-pressed": "false", title: t("Thumbnails"), "aria-label": t("Thumbnails"), onclick: (e) => { side.hidden = !side.hidden; e.currentTarget.setAttribute("aria-pressed", String(!side.hidden)); if (!thumbs.length) { buildThumbs(); mark(); } } }, "▤"),
     h("button", { class: "ic", "aria-label": t("Previous page"), onclick: () => goto(page - 1) }, "‹"), info, tot, h("button", { class: "ic", "aria-label": t("Next page"), onclick: () => goto(page + 1) }, "›"),
     h("button", { class: "ic", "aria-label": t("Zoom out"), onclick: () => zoomBy(1 / 1.2) }, "−"), h("button", { class: "ic", "aria-label": t("Zoom in"), onclick: () => zoomBy(1.2) }, "+"),

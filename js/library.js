@@ -126,7 +126,7 @@ export function visible() {
   const { section, colId, q, sort, type } = state, needle = q.trim().toLowerCase();
   let r = state.items.filter((i) => (section === "trash" ? i.trashed : !i.trashed));
   if (section === "recent") r = r.filter((i) => i.opened).sort((a, b) => b.opened - a.opened);
-  else if (["img", "vid", "aud"].includes(section)) r = r.filter((i) => i.cat === section);
+  else if (["img", "vid", "aud", "sub"].includes(section)) r = r.filter((i) => i.cat === section);
   else if (section === "doc") r = r.filter((i) => i.cat === "doc" || i.cat === "txt");
   else if (section === "fav") r = r.filter((i) => i.fav);
   else if (section === "col") r = r.filter((i) => i.cols.includes(colId));
@@ -136,8 +136,8 @@ export function visible() {
   return r;
 }
 export function counts() {
-  const live = state.items.filter((i) => !i.trashed), c = { all: live.length, img: 0, vid: 0, aud: 0, doc: 0, fav: 0, trash: state.items.length - live.length, recent: 0 };
-  for (const i of live) { if (i.cat === "img" || i.cat === "vid" || i.cat === "aud") c[i.cat]++; else c.doc++; if (i.fav) c.fav++; if (i.opened) c.recent++; }
+  const live = state.items.filter((i) => !i.trashed), c = { all: live.length, img: 0, vid: 0, aud: 0, sub: 0, doc: 0, fav: 0, trash: state.items.length - live.length, recent: 0 };
+  for (const i of live) { if (i.cat === "img" || i.cat === "vid" || i.cat === "aud" || i.cat === "sub") c[i.cat]++; else c.doc++; if (i.fav) c.fav++; if (i.opened) c.recent++; }
   return c;
 }
 export const totalSize = () => state.items.reduce((s, i) => s + i.size, 0);

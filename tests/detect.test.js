@@ -53,4 +53,18 @@ describe("format detection from real bytes", () => {
   it("every category entry is consistent", () => {
     for (const f of VIEWABLE) expect(CAT[f], f).toBeTruthy();
   });
+  it("recognizes subtitle files by content, in UTF-8, UTF-16 and legacy code pages", () => {
+    expect(detect(b("1\r\n00:00:01,000 --> 00:00:02,000\r\nHi"), "a.srt").f).toBe("srt");
+    expect(detect(b("00:00:01.000 --> 00:00:02.000\nno index"), "a.srt").f).toBe("srt");
+    expect(detect(b("WEBVTT\n\n00:01.000 --> 00:02.000\nHi"), "a.vtt").f).toBe("vtt");
+    expect(detect(b("[Script Info]\nTitle: x\n"), "a.ass").f).toBe("ass");
+    expect(detect(b("[Script Info]\nTitle: x\n"), "a.ssa").warn).toBe("");
+    const win = new Uint8Array([...Buffer.from("1\n00:00:01,000 --> 00:00:02,000\nsta"), 0xe3, 0x20, 0xba, 0x69]); // legacy Windows-1250 bytes, not valid UTF-8
+    expect(detect(win, "ro.srt").f).toBe("srt");
+    const u16 = Buffer.concat([Buffer.from([0xff, 0xfe]), Buffer.from("1\n00:00:01,000 --> 00:00:02,000\nHi", "utf16le")]);
+    expect(detect(new Uint8Array(u16), "u.srt").f).toBe("srt");
+    expect(detect(b("plain notes, nothing timed here"), "n.srt").f).toBe("txt");
+    expect(detect(b("1\n00:00:01,000 --> 00:00:02,000\nHi"), "wrong.txt").warn).toContain("srt");
+    expect(detect(new Uint8Array([0x80, 0x81, 0x82, 0xe3, 0xe4]), "x.srt").f).toBe("bin");
+  });
 });
