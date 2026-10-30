@@ -82,7 +82,7 @@ export function openSettings(tab = "General", hooks = {}) {
       fld(t("Play next track automatically"), h("input", { type: "checkbox", checked: settings.autoNext, onchange: (e) => update({ autoNext: e.target.checked }) })),
       fld(t("Waveform analysis limit"), sel("waveMb", [[8, "8 MB"], [16, "16 MB"], [32, "32 MB"], [64, "64 MB"]]), t("Bigger audio files are played without a waveform to save memory.")));
     if (cur === "Appearance") content.append(
-      fld(t("Theme"), sel("theme", [["system", t("System")], ["light", t("Light")], ["dark", t("Dark")], ["halloween", t("Halloween") + " 🎃"]])),
+      fld(t("Theme"), sel("theme", [["system", t("System")], ["light", t("Light")], ["dark", t("Dark")], ["halloween", t("Halloween") + " 🎃"], ["winter", t("Winter") + " ❄️"]])),
       fld(t("Accent color"), h("input", { type: "color", value: settings.accent, onchange: (e) => update({ accent: e.target.value }) })),
       fld(t("Interface size"), sel("scale", [[90, "90%"], [100, "100%"], [110, "110%"], [120, "120%"]])),
       fld(t("Density"), sel("density", [["comfortable", t("Comfortable")], ["compact", t("Compact")]])));

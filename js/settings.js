@@ -4,7 +4,7 @@ import { onColor } from "./util.js";
 
 export const DEFAULTS = { lang: "system", theme: "system", accent: "#4b3df0", density: "comfortable", scale: 100, view: "grid", autoNext: true, waveMb: 16, onboarded: false };
 const RULES = {
-  lang: (v) => typeof v === "string", theme: (v) => ["system", "light", "dark", "halloween"].includes(v), accent: (v) => /^#[0-9a-f]{6}$/i.test(v), density: (v) => ["comfortable", "compact"].includes(v),
+  lang: (v) => typeof v === "string", theme: (v) => ["system", "light", "dark", "halloween", "winter"].includes(v), accent: (v) => /^#[0-9a-f]{6}$/i.test(v), density: (v) => ["comfortable", "compact"].includes(v),
   scale: (v) => Number.isFinite(v) && v >= 85 && v <= 130, view: (v) => ["grid", "list"].includes(v), autoNext: (v) => typeof v === "boolean", waveMb: (v) => [8, 16, 32, 64].includes(v), onboarded: (v) => typeof v === "boolean",
 };
 export const settings = { ...DEFAULTS };
@@ -25,9 +25,10 @@ export function update(patch) {
   try { localStorage.setItem(KEY, JSON.stringify(settings)); } catch { /* storage may be blocked */ }
   apply();
 }
-const THEME_COLORS = { light: "#f4f6fb", dark: "#0c1022", halloween: "#150b22" };
-/** Mid-October to early November: time to offer the Halloween theme. */
-export const inHalloweenSeason = (d = new Date()) => (d.getMonth() === 9 && d.getDate() >= 15) || (d.getMonth() === 10 && d.getDate() <= 2);
+const THEME_COLORS = { light: "#f4f6fb", dark: "#0c1022", halloween: "#150b22", winter: "#dcebf7" };
+/** Mid-October to early November: Halloween. December to 6 January: winter. Otherwise null. */
+export const seasonalTheme = (d = new Date()) => ((d.getMonth() === 9 && d.getDate() >= 15) || (d.getMonth() === 10 && d.getDate() <= 2) ? "halloween" : d.getMonth() === 11 || (d.getMonth() === 0 && d.getDate() <= 6) ? "winter" : null);
+export const inHalloweenSeason = (d = new Date()) => seasonalTheme(d) === "halloween";
 export function apply() {
   const r = document.documentElement;
   if (settings.theme === "system") delete r.dataset.theme; else r.dataset.theme = settings.theme;
@@ -37,6 +38,6 @@ export function apply() {
   else { r.style.removeProperty("--br"); r.style.removeProperty("--on"); }
   const dark = settings.theme === "system" && globalThis.matchMedia?.("(prefers-color-scheme: dark)").matches;
   const meta = document.querySelector('meta[name="theme-color"]'); if (meta) meta.content = THEME_COLORS[settings.theme] || (dark ? THEME_COLORS.dark : THEME_COLORS.light);
-  const icon = document.querySelector('link[rel="icon"]'); if (icon) icon.setAttribute("href", settings.theme === "halloween" ? "icons/icon-halloween.svg" : "icons/icon.svg");
+  const icon = document.querySelector('link[rel="icon"]'); if (icon) icon.setAttribute("href", { halloween: "icons/icon-halloween.svg", winter: "icons/icon-winter.svg" }[settings.theme] || "icons/icon.svg");
   setLang(settings.lang);
 }

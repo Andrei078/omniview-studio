@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="OmniView">
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1f7ae0"/><stop offset="1" stop-color="#0b2a55"/></linearGradient>
+<radialGradient id="gl" cx=".3" cy=".2" r=".9"><stop offset="0" stop-color="#fff" stop-opacity=".22"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/></radialGradient>
+</defs>
+<rect width="64" height="64" rx="16" fill="url(#bg)"/><rect width="64" height="64" rx="16" fill="url(#gl)"/>
+<g fill="none" stroke-width="6.5" stroke-linecap="round" transform="rotate(-135 32 32)">
+<circle cx="32" cy="32" r="21" stroke="#5ec8ff" stroke-dasharray="27 104.9" />
+<circle cx="32" cy="32" r="21" stroke="#9aa8ff" stroke-dasharray="27 104.9" transform="rotate(90 32 32)"/>
+<circle cx="32" cy="32" r="21" stroke="#6fe0d0" stroke-dasharray="27 104.9" transform="rotate(180 32 32)"/>
+<circle cx="32" cy="32" r="21" stroke="#ffffff" stroke-dasharray="27 104.9" transform="rotate(270 32 32)"/>
+</g>
+<path d="M17.5 32C22 24.6 27 21.6 32 21.6S42 24.6 46.5 32C42 39.4 37 42.4 32 42.4S22 39.4 17.5 32Z" fill="#fff"/>
+<circle cx="32" cy="32" r="6.4" fill="#0b2a55"/><circle cx="34.2" cy="29.8" r="2.1" fill="#fff"/>
+<path d="M2 17C3 8 14 1 32 1S61 8 62 17C58 14 54 17 50 15C46 19 42 14 38 17C34 20 30 14 26 17C22 19 18 14 14 16C10 18 6 14 2 17Z" fill="#fff"/></svg>

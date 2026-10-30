@@ -125,7 +125,7 @@ describe("application", () => {
     $("#btn-settings").click();
     const sel = (label) => $$(".dlg label").find((l) => l.textContent.startsWith(label));
     [...$$(".dlg button")].find((b) => b.textContent === "Appearance").click();
-    const theme = sel("Theme").querySelector("select"); expect([...theme.options].map((o) => o.value)).toEqual(["system", "light", "dark", "halloween"]);
+    const theme = sel("Theme").querySelector("select"); expect([...theme.options].map((o) => o.value)).toEqual(["system", "light", "dark", "halloween", "winter"]);
     theme.value = "dark"; theme.dispatchEvent(new Event("change")); expect(document.documentElement.dataset.theme).toBe("dark");
     const t2 = sel("Theme").querySelector("select"); t2.value = "halloween"; t2.dispatchEvent(new Event("change")); expect(document.documentElement.dataset.theme).toBe("halloween");
     expect(document.querySelector('meta[name="theme-color"]').content).toBe("#150b22"); expect(document.querySelector('link[rel="icon"]').getAttribute("href")).toBe("icons/icon-halloween.svg");

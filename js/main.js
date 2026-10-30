@@ -2,7 +2,7 @@
 import { $, h, toast, bar, download, debounce } from "./util.js";
 import * as db from "./db.js";
 import * as L from "./library.js";
-import { settings, loadSettings, update, inHalloweenSeason } from "./settings.js";
+import { settings, loadSettings, update, seasonalTheme } from "./settings.js";
 import { t, applyI18n, onLang } from "./i18n.js";
 import { render, importUI, setAndScroll, closeCtx } from "./views.js";
 import { isOpen, requestClose, step } from "./viewer.js";
@@ -93,9 +93,12 @@ export async function start({ indexedDBFactory } = {}) {
   const sp = $("#splash"); if (sp) { sp.classList.add("out"); setTimeout(() => sp.remove(), 300); }
   registerSW();
   if (!settings.onboarded) onboarding(() => update({ onboarded: true }));
-  else if (inHalloweenSeason() && settings.theme !== "halloween") {
-    let asked = false; try { asked = !!localStorage.getItem("ov-hw-asked"); localStorage.setItem("ov-hw-asked", "1"); } catch { /* ignore */ }
-    if (!asked) setTimeout(() => toast(t("Halloween is here 🎃 Try the spooky theme?"), { label: t("Try it"), run: () => update({ theme: "halloween" }) }), 2500);
+  else {
+    const season = seasonalTheme();
+    if (season && settings.theme !== season) {
+      const key = "ov-season-" + season + "-" + new Date().getFullYear(); let asked = false; try { asked = !!localStorage.getItem(key); localStorage.setItem(key, "1"); } catch { /* ignore */ }
+      if (!asked) setTimeout(() => toast(season === "halloween" ? t("Halloween is here 🎃 Try the spooky theme?") : t("Winter is here ❄️ Try the frosty theme?"), { label: t("Try it"), run: () => update({ theme: season }) }), 2500);
+    }
   }
 }
 if (!globalThis.__OV_TEST__) start();

@@ -1,0 +1,20 @@
+/* Winter theme: frosty light blue, snowfall, snow-capped logo. Decoration never intercepts clicks. */
+@font-face{font-family:"Mountains of Christmas";font-weight:700;font-display:swap;src:url(../fonts/mountains-of-christmas-latin-700-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122}
+:root[data-theme="winter"]{--bg:#e8f2fb;--pn:#ffffff;--pn2:#dfecf8;--ink:#0e2740;--mut:#55708a;--ln:#cbdeee;--br:#1f7ae0;--on:#fff;--danger:#c62828;
+--c-img:#ff7a59;--c-vid:#6a6cf0;--c-aud:#14a89a;--c-doc:#e0a010;--c-txt:#2b8cff;--c-sub:#d94a8c;
+--l1:#5ec8ff;--l2:#9aa8ff;--l3:#6fe0d0;--l4:#ffffff;--lb1:#1f7ae0;--lb2:#0b2a55;--lp:#0b2a55;color-scheme:light}
+:root[data-theme="winter"] body{background:radial-gradient(900px 480px at 88% -10%,#ffffffcc,transparent 70%),radial-gradient(700px 400px at -5% 105%,#b9dcf855,transparent 70%),linear-gradient(#eaf4fc,#dbeaf6);scrollbar-color:#8fb6d8 #e8f2fb}
+[data-theme="winter"] header.top{background:color-mix(in srgb,#f4faff 88%,transparent);border-bottom-color:#bcd7ec;box-shadow:0 1px 0 #fff inset,0 6px 18px #7fa9cc22}
+[data-theme="winter"] .brand span,[data-theme="winter"] .splash b{font-family:"Mountains of Christmas","Bricolage Grotesque",system-ui,sans-serif;font-weight:700;font-size:1.55rem;color:#0b4a9c;letter-spacing:.02em}
+[data-theme="winter"] button.pri{background:linear-gradient(180deg,#4ea1ff,#1f7ae0);border-color:#1f6fd0;box-shadow:0 4px 14px #1f7ae044}
+[data-theme="winter"] .card{box-shadow:0 1px 0 #fff inset,0 8px 22px #7fa9cc1f}
+@media(hover:hover){[data-theme="winter"] .card:hover{border-color:#4ea1ff;box-shadow:0 10px 26px #1f7ae033}}
+[data-theme="winter"] .hero h1::after{content:" ❄️"}
+[data-theme="winter"] .hero svg.logo{filter:drop-shadow(0 8px 18px #1f7ae055)}
+.p-snow{display:none}[data-theme="winter"] .p-snow{display:inline}
+[data-theme="winter"] body::before,[data-theme="winter"] body::after{content:"";position:fixed;inset:-200px 0 0 0;pointer-events:none;z-index:7;filter:drop-shadow(0 0 1.5px #7fa9cc);will-change:background-position}
+[data-theme="winter"] body::before{background-image:radial-gradient(3px 3px at 20px 30px,#fff,transparent),radial-gradient(2px 2px at 90px 110px,#fff,transparent),radial-gradient(3px 3px at 160px 60px,#fff,transparent),radial-gradient(2px 2px at 220px 150px,#fff,transparent),radial-gradient(3px 3px at 300px 40px,#fff,transparent),radial-gradient(2px 2px at 360px 120px,#fff,transparent);background-size:400px 200px;opacity:.9;animation:snow1 14s linear infinite}
+[data-theme="winter"] body::after{background-image:radial-gradient(4px 4px at 50px 70px,#fff,transparent),radial-gradient(2.5px 2.5px at 140px 20px,#fff,transparent),radial-gradient(4px 4px at 250px 130px,#fff,transparent),radial-gradient(2.5px 2.5px at 330px 90px,#fff,transparent);background-size:360px 240px;opacity:.75;animation:snow2 22s linear infinite}
+@keyframes snow1{to{background-position:60px 200px}}
+@keyframes snow2{to{background-position:-90px 240px}}
+@media(prefers-reduced-motion:reduce){[data-theme="winter"] body::before,[data-theme="winter"] body::after{animation:none}}

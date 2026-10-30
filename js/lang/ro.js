@@ -364,6 +364,8 @@ export const RO = {
   "Welcome back": "Bine ai revenit",
   "Welcome to OmniView": "Bun venit în OmniView",
   "Whole words": "Cuvinte întregi",
+  "Winter": "Iarnă",
+  "Winter is here ❄️ Try the frosty theme?": "A venit iarna ❄️ Încerci tema înghețată?",
   "Works offline once loaded. Your library is saved automatically on this device.": "Funcționează și offline după încărcare. Biblioteca se salvează automat pe acest dispozitiv.",
   "Your browser blocks local storage (private browsing?). Open OmniView in a normal window to keep your files.": "Browserul blochează stocarea locală (navigare privată?). Deschide OmniView într-o fereastră normală ca să-ți păstrezi fișierele.",
   "Your files never leave this device.": "Fișierele tale nu părăsesc niciodată acest dispozitiv.",
